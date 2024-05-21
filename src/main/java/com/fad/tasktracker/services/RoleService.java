@@ -10,7 +10,9 @@ import com.fad.tasktracker.repositories.RoleRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,15 +22,30 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Role createRole(@Valid Role role) {
-        if (roleRepository.findByName(role.getName()).isPresent()) {
-            throw new ValidationException("Role already exists");
+    public Map<String, Object> createRole(@Valid Role role) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Role> existingRole = roleRepository.findByName(role.getName());
+
+        if (existingRole.isPresent()) {
+            response.put("message", "Role already exists");
+            response.put("status", "failure");
+            return response;
         }
-        return roleRepository.save(role);
+
+        Role theRole = roleRepository.save(role);
+        response.put("message", "Role created successfully");
+        response.put("status", "success");
+        response.put("role", theRole);
+
+        return response;
     }
 
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    public Optional<Role> getRoleByName(String name) {
+        return roleRepository.findByName(name);
     }
 
     public Optional<Role> getRoleById(Long id) {

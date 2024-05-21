@@ -1,5 +1,6 @@
 package com.fad.tasktracker.controllers;
 
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +10,6 @@ import com.fad.tasktracker.services.RoleService;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
@@ -19,13 +17,16 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @PostMapping
-    public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
-        Role createdRole = roleService.createRole(role);
-        return ResponseEntity.ok(createdRole);
+    @PostMapping("/")
+    public ResponseEntity<Map<String, Object>> createRole(@Valid @RequestBody Role role) {
+        Map<String, Object> response = roleService.createRole(role);
+        if ("failure".equals(response.get("status"))) {
+            return ResponseEntity.badRequest().body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);
@@ -44,8 +45,8 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+    public ResponseEntity<?> deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Role deleted successfully");
     }
 }

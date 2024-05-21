@@ -29,6 +29,7 @@ public class Project {
     @NotBlank
     private String description;
 
+    @NotBlank
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
@@ -37,6 +38,7 @@ public class Project {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
+    @NotBlank(message = "Expected end Date is required")
     @Column(name = "expected_end_date")
     private LocalDateTime expectedEndDate;
 
