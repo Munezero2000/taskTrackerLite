@@ -1,4 +1,4 @@
-package com.fad.tasktracker.entity;
+package com.fad.tasktracker.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

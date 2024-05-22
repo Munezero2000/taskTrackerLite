@@ -4,16 +4,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "user_roles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,6 @@ public class Role {
     private String description;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     private Set<User> users;
 }

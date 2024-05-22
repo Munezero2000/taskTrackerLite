@@ -1,12 +1,14 @@
 package com.fad.tasktracker.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +31,6 @@ public class Project {
     @NotBlank
     private String description;
 
-    @NotBlank
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
@@ -38,10 +39,17 @@ public class Project {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @NotBlank(message = "Expected end Date is required")
+    @NotNull
     @Column(name = "expected_end_date")
-    private LocalDateTime expectedEndDate;
+    private LocalDate expectedEndDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "project")
     private Set<Task> tasks;
+
+    @Override
+    public String toString() {
+        return "User{id=" + id + ", name=" + name;
+    }
+
 }

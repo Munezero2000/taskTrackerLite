@@ -11,8 +11,7 @@ import com.fad.tasktracker.repositories.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -39,12 +38,34 @@ public class ProjectService {
         return projectRepository.findById(id);
     }
 
-    public Project updateProject(Long id, @Valid Project project) {
-        if (!projectRepository.existsById(id)) {
+    public Map<String, Object> updateProject(Project project) {
+        Optional<Project> optionalProject = projectRepository.findById(project.getId());
+        if (optionalProject.isEmpty()) {
             throw new ValidationException("Project not found");
         }
-        project.setId(id);
-        return projectRepository.save(project);
+
+        Project existingProject = optionalProject.get();
+
+        // Update the provided fields
+        if (project.getName() != null) {
+            existingProject.setName(project.getName());
+        }
+        if (project.getDescription() != null) {
+            existingProject.setDescription(project.getDescription());
+        }
+        if (project.getExpectedEndDate() != null) {
+            existingProject.setExpectedEndDate(project.getExpectedEndDate());
+        }
+
+        // Save the updated project
+        Project savedProject = projectRepository.save(existingProject);
+
+        // Prepare the response
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Project updated successfully");
+        response.put("project", savedProject);
+
+        return response;
     }
 
     public void deleteProject(Long id) {

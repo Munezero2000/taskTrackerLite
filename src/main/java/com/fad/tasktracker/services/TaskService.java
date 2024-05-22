@@ -1,18 +1,17 @@
 package com.fad.tasktracker.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fad.tasktracker.entity.Task;
 import com.fad.tasktracker.repositories.ProjectRepository;
 import com.fad.tasktracker.repositories.TaskRepository;
 import com.fad.tasktracker.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,36 +27,61 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    public Task createTask(@Valid Task task) {
+    public Map<String, Object> createTask(@Valid Task task) {
+        Map<String, Object> response = new HashMap<>();
         if (!projectRepository.existsById(task.getProject().getId())) {
-            throw new ValidationException("Project not found");
+            response.put("error", "Project not found");
+            return response;
         }
         if (!userRepository.existsById(task.getAssignedTo().getId())) {
-            throw new ValidationException("Assigned user not found");
+            response.put("error", "Assigned user not found");
+            return response;
         }
-        return taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
+        response.put("message", "Task created successfully");
+        response.put("task", savedTask);
+        return response;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public Map<String, Object> getAllTasks() {
+        Map<String, Object> response = new HashMap<>();
+        List<Task> tasks = taskRepository.findAll();
+        response.put("tasks", tasks);
+        return response;
     }
 
-    public Optional<Task> getTaskById(Long id) {
-        return taskRepository.findById(id);
+    public Map<String, Object> getTaskById(Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Task> optionalTask = taskRepository.findById(id);
+        if (optionalTask.isPresent()) {
+            response.put("task", optionalTask.get());
+        } else {
+            response.put("error", "Task not found");
+        }
+        return response;
     }
 
-    public Task updateTask(Long id, @Valid Task task) {
+    public Map<String, Object> updateTask(Long id, @Valid Task task) {
+        Map<String, Object> response = new HashMap<>();
         if (!taskRepository.existsById(id)) {
-            throw new ValidationException("Task not found");
+            response.put("error", "Task not found");
+            return response;
         }
         task.setId(id);
-        return taskRepository.save(task);
+        Task updatedTask = taskRepository.save(task);
+        response.put("message", "Task updated successfully");
+        response.put("task", updatedTask);
+        return response;
     }
 
-    public void deleteTask(Long id) {
+    public Map<String, Object> deleteTask(Long id) {
+        Map<String, Object> response = new HashMap<>();
         if (!taskRepository.existsById(id)) {
-            throw new ValidationException("Task not found");
+            response.put("message", "Task not found");
+            return response;
         }
         taskRepository.deleteById(id);
+        response.put("message", "Task deleted successfully");
+        return response;
     }
 }

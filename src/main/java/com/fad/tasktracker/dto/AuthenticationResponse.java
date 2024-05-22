@@ -1,4 +1,4 @@
-package com.fad.tasktracker.entity;
+package com.fad.tasktracker.dto;
 
 public class AuthenticationResponse {
     private String jwt;

@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String[] WHITE_LIST_URL = {};
+    private static final String[] WHITE_LIST_URL = {
+            "/auth/**",
+            "/swagger-ui/**",
+            "/swagger-ui/index.html",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**", };
 
     @Autowired
     private final JsonWebTokenAuthFilter jwtAuthFilter;
@@ -36,6 +43,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(WHITE_LIST_URL).permitAll()
+                        .requestMatchers("/projects/").hasAnyAuthority("MANAGER")
+                        .requestMatchers("/roles/").hasAnyAuthority("MANAGER")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

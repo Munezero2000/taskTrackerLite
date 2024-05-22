@@ -12,14 +12,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fad.tasktracker.configuration.NotificationService;
 import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.repositories.UserRepository;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.ValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.management.Notification;
 
 @Service
 @Transactional
@@ -29,9 +33,12 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Map<String, Object> createUser(User user) {
+    public Map<String, Object> createUser(User user) throws MessagingException {
         Map<String, Object> response = new HashMap<>();
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             response.put("message", "This email has been taken use another email");
@@ -40,6 +47,8 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
+        notificationService.sendNotification(savedUser.getEmail(), "Account created", "Account created", "Your account has been created login now and access the portal", "");
+        
         response.put("message", "User created successfully");
         response.put("user", savedUser);
         return response;
@@ -121,6 +130,10 @@ public class UserService implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).get();
     }
 
     public Map<String, Object> deleteUser(Long id) {

@@ -2,15 +2,17 @@ package com.fad.tasktracker.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.fad.tasktracker.entity.Project;
+import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.services.ProjectService;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/projects")
@@ -21,6 +23,10 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Project> createProject(@Valid @RequestBody Project project) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User creator = (User) authentication.getPrincipal();
+        project.setCreatedBy(creator);
+
         Project createdProject = projectService.createProject(project);
         return ResponseEntity.ok(createdProject);
     }
@@ -38,14 +44,16 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @Valid @RequestBody Project project) {
-        Project updatedProject = projectService.updateProject(id, project);
-        return ResponseEntity.ok(updatedProject);
+    public ResponseEntity<Map<String, Object>> updateProject(@Valid @PathVariable Long id,
+            @RequestBody Project project) {
+        project.setId(id);
+        Map<String, Object> response = projectService.updateProject(project);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Project Deleted successfully");
     }
 }

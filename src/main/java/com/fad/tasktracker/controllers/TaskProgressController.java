@@ -1,15 +1,20 @@
 package com.fad.tasktracker.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fad.tasktracker.dto.TaskProgressDTO;
+import com.fad.tasktracker.entity.Task;
 import com.fad.tasktracker.entity.TaskProgress;
 import com.fad.tasktracker.services.TaskProgressService;
+import com.fad.tasktracker.services.TaskService;
 
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,8 +24,19 @@ public class TaskProgressController {
     @Autowired
     private TaskProgressService taskProgressService;
 
+    @Autowired
+    private TaskService taskService;
+
     @PostMapping
-    public ResponseEntity<TaskProgress> createTaskProgress(@Valid @RequestBody TaskProgress taskProgress) {
+    public ResponseEntity<TaskProgress> createTaskProgress(@Valid @RequestBody TaskProgressDTO taskProgressDto) {
+
+        TaskProgress taskProgress = new TaskProgress();
+        Map<String, Object> optionalTask = taskService.getTaskById(taskProgressDto.getTaskId());
+        Task task = (Task) optionalTask.get("task");
+
+        taskProgress.setTask(task);
+        taskProgress.setProgressNote(taskProgressDto.getProgressNote());
+
         TaskProgress createdTaskProgress = taskProgressService.createTaskProgress(taskProgress);
         return ResponseEntity.ok(createdTaskProgress);
     }
@@ -45,8 +61,8 @@ public class TaskProgressController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTaskProgress(@PathVariable Long id) {
+    public ResponseEntity<?> deleteTaskProgress(@PathVariable Long id) {
         taskProgressService.deleteTaskProgress(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity("Deleted successfully", HttpStatus.OK);
     }
 }

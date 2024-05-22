@@ -30,14 +30,20 @@ public class JsonWebTokenAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
-    private static final String[] WHITE_LIST_URL = {};
+    private static final String[] WHITE_LIST_URL = {
+            "/auth/**",
+            "/swagger-ui/**",
+            "/swagger-ui/index.html",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+    };
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String requestPath = request.getRequestURI();
-
 
         if (isWhitelisted(requestPath)) {
             filterChain.doFilter(request, response);
@@ -46,10 +52,9 @@ public class JsonWebTokenAuthFilter extends OncePerRequestFilter {
 
         try {
             String jwt = getTokenFromCookies(request);
-            System.out.println("I am checking the token: " + jwt);
 
             if (jwt == null) {
-                sendUnauthorizedResponse(response, "JWT token is missing....");
+                sendUnauthorizedResponse(response, "no token provided");
                 return;
             }
 

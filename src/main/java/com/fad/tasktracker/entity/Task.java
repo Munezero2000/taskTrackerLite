@@ -2,11 +2,14 @@ package com.fad.tasktracker.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -26,27 +29,28 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "the description must not be blank")
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "assigned_to", nullable = false)
     private User assignedTo;
 
-    @NotBlank
-    @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.TODO;
 
     @Column(name = "priority")
+    @Enumerated(EnumType.STRING)
     private TaskPriority priority = TaskPriority.MEDIUM;
 
-    @NotBlank(message = "task due date is requried")
     @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "task")
     private List<TaskProgress> progress;
 }

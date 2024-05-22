@@ -12,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -40,6 +39,7 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Size(min = 4, max = 1024, message = "password must be 4 charcters minimum")
     private String password;
 
@@ -47,16 +47,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "createdBy")
-    private List<Project> projects;
-
-    @OneToMany(mappedBy = "assignedTo")
+    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY)
     private List<Task> tasks;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
@@ -67,6 +66,7 @@ public class User implements UserDetails {
         return password;
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return email;
