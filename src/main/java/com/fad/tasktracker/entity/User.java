@@ -39,7 +39,6 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @JsonIgnore
     @Size(min = 4, max = 1024, message = "password must be 4 charcters minimum")
     private String password;
 
@@ -52,6 +51,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY)
     private List<Task> tasks;
 

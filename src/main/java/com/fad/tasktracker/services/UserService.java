@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.management.Notification;
-
 @Service
 @Transactional
 public class UserService implements UserDetailsService {
@@ -44,7 +42,9 @@ public class UserService implements UserDetailsService {
             response.put("message", "This email has been taken use another email");
             return response;
         }
+        System.out.println("Here I am checking the password : "+ user.getPassword());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         User savedUser = userRepository.save(user);
 
         notificationService.sendNotification(savedUser.getEmail(), "Account created", "Account created", "Your account has been created login now and access the portal", "");
