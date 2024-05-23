@@ -14,24 +14,17 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class TaskDTO {
-    private Long id;
 
-    @NotNull
     private Long projectId;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String description;
 
-    @NotNull
     private Long assignedToId;
 
-    @NotNull
     private TaskPriority priority;
 
-    @NotNull
     private LocalDate dueDate;
 
 }

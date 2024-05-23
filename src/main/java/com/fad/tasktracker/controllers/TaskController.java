@@ -3,6 +3,7 @@ package com.fad.tasktracker.controllers;
 import com.fad.tasktracker.dto.TaskDTO;
 import com.fad.tasktracker.entity.Project;
 import com.fad.tasktracker.entity.Task;
+import com.fad.tasktracker.entity.TaskStatus;
 import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.services.ProjectService;
 import com.fad.tasktracker.services.TaskService;
@@ -14,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -70,6 +74,14 @@ public class TaskController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Object> getUserTask(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        List<Task> userTasks = taskService.getUserTask(id);
+        response.put("Tasks", userTasks);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateTask(@PathVariable Long id, @Valid @RequestBody TaskDTO taskDto) {
         Map<String, Object> optionalUser = userService.getUserById(taskDto.getAssignedToId());
@@ -83,7 +95,7 @@ public class TaskController {
         Map<String, Object> optionalTask = taskService.getTaskById(id);
         Task task = (Task) optionalTask.get("task");
 
-        if (task== null) {
+        if (task == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Task not found"));
         }
 
@@ -100,6 +112,24 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
         return ResponseEntity.ok(response.get("task"));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Object> updateTaskStatus(@PathVariable Long id, @Valid @RequestBody TaskStatus status) {
+
+        Map<String, Object> optionalTask = taskService.getTaskById(id);
+        Task task = (Task) optionalTask.get("task");
+
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Task not found"));
+        }
+        task.setStatus(status);
+        Map<String, Object> response = taskService.updateTask(id, task);
+
+        if (response.containsKey("message")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

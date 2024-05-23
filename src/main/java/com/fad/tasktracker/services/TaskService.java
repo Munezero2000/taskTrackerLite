@@ -1,6 +1,7 @@
 package com.fad.tasktracker.services;
 
 import com.fad.tasktracker.entity.Task;
+import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.repositories.ProjectRepository;
 import com.fad.tasktracker.repositories.TaskRepository;
 import com.fad.tasktracker.repositories.UserRepository;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,5 +86,18 @@ public class TaskService {
         taskRepository.deleteById(id);
         response.put("message", "Task deleted successfully");
         return response;
+    }
+
+    public List<Task> getUserTask(Long id) {
+        Map<String, Object> response = new HashMap();
+        response = getTaskById(id);
+        User user = (User) response.get("data");
+        List<Task> userTasks = new ArrayList<>();
+        if (taskRepository.findByAssignedTo(user).isPresent()) {
+            userTasks = taskRepository.findByAssignedTo(user).get();
+
+        }
+        ;
+        return userTasks;
     }
 }
