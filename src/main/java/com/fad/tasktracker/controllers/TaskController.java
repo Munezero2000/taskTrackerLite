@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class TaskController {
     private ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<Object> createTask(@Valid @RequestBody TaskDTO taskDto) {
+    public ResponseEntity<Object> createTask(@Valid @RequestBody TaskDTO taskDto) throws MessagingException {
         Task task = new Task();
         Map<String, Object> optionalUser = userService.getUserById(taskDto.getAssignedToId());
         User user = (User) optionalUser.get("user");
