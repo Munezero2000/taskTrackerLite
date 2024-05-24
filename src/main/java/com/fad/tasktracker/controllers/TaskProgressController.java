@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fad.tasktracker.dto.TaskProgressDTO;
 import com.fad.tasktracker.entity.Task;
 import com.fad.tasktracker.entity.TaskProgress;
 import com.fad.tasktracker.services.TaskProgressService;
 import com.fad.tasktracker.services.TaskService;
+import com.fad.tasktracker.util.TaskProgressDTO;
 
 import jakarta.validation.Valid;
 

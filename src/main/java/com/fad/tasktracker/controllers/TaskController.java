@@ -1,6 +1,5 @@
 package com.fad.tasktracker.controllers;
 
-import com.fad.tasktracker.dto.TaskDTO;
 import com.fad.tasktracker.entity.Project;
 import com.fad.tasktracker.entity.Task;
 import com.fad.tasktracker.entity.TaskStatus;
@@ -8,6 +7,7 @@ import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.services.ProjectService;
 import com.fad.tasktracker.services.TaskService;
 import com.fad.tasktracker.services.UserService;
+import com.fad.tasktracker.util.TaskDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

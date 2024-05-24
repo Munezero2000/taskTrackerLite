@@ -51,7 +51,7 @@ public class User implements UserDetails {
     private Role role;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assignedTo", fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     @JsonIgnore

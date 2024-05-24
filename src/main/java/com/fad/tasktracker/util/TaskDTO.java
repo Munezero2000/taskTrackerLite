@@ -1,4 +1,4 @@
-package com.fad.tasktracker.dto;
+package com.fad.tasktracker.util;
 
 import java.time.LocalDate;
 import com.fad.tasktracker.entity.TaskPriority;

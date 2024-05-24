@@ -38,9 +38,19 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
-        Optional<Project> project = projectService.getProjectById(id);
-        return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getProjectById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap();
+        Optional<Project> optionalProject = projectService.getProjectById(id);
+        if (optionalProject.isPresent()) {
+            Project project = optionalProject.get();
+            response.put("Project", project);
+            response.put("tasks", project.getTasks());
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("Error", "Project not found");
+            return ResponseEntity.badRequest().body(response);
+        }
+
     }
 
     @PutMapping("/{id}")

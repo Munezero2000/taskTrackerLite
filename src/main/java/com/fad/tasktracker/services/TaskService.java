@@ -1,5 +1,6 @@
 package com.fad.tasktracker.services;
 
+import com.fad.tasktracker.configuration.NotificationService;
 import com.fad.tasktracker.entity.Task;
 import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.repositories.ProjectRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.management.Notification;
 
 @Service
 @Transactional
@@ -30,7 +34,10 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    public Map<String, Object> createTask(@Valid Task task) {
+    @Autowired
+    private NotificationService notificationService;
+
+    public Map<String, Object> createTask(@Valid Task task) throws MessagingException {
         Map<String, Object> response = new HashMap<>();
         if (!projectRepository.existsById(task.getProject().getId())) {
             response.put("error", "Project not found");
@@ -41,6 +48,11 @@ public class TaskService {
             return response;
         }
         Task savedTask = taskRepository.save(task);
+        notificationService.sendNotification(task.getAssignedTo().getEmail(), "Task Assignment",
+                "New Task New Challange, An Opportunity for Growth",
+                "Dear "+task.getAssignedTo().getFirstName()+" You have been assigned a new task of " + task.getName() + " with a dueDate of " + task.getDueDate()
+                        + " View your portal and read more details to accomplish it in time",
+                "");
         response.put("message", "Task created successfully");
         response.put("task", savedTask);
         return response;

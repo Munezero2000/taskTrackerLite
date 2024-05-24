@@ -1,11 +1,11 @@
 package com.fad.tasktracker.controllers;
 
 import com.fad.tasktracker.configuration.JwtUtil;
-import com.fad.tasktracker.dto.AuthenticationRequest;
 import com.fad.tasktracker.entity.Role;
 import com.fad.tasktracker.entity.User;
 import com.fad.tasktracker.services.RoleService;
 import com.fad.tasktracker.services.UserService;
+import com.fad.tasktracker.util.AuthenticationRequest;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
