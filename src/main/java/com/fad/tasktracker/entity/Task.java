@@ -33,6 +33,7 @@ public class Task {
     @NotBlank(message = "the description must not be blank")
     private String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "assigned_to", nullable = false)
     private User assignedTo;
