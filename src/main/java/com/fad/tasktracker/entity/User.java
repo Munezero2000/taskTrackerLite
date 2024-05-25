@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @OneToMany(mappedBy = "assignedTo", fetch = FetchType.EAGER)
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
     @JsonIgnore
     @Override

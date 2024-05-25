@@ -102,14 +102,12 @@ public class TaskService {
 
     public List<Task> getUserTask(Long id) {
         Map<String, Object> response = new HashMap();
-        response = getTaskById(id);
-        User user = (User) response.get("data");
-        List<Task> userTasks = new ArrayList<>();
-        if (taskRepository.findByAssignedTo(user).isPresent()) {
-            userTasks = taskRepository.findByAssignedTo(user).get();
-
+        Optional<User> optionalUser = userRepository.findById(id);
+        User user = null;
+        if(optionalUser.isPresent()){
+           user = optionalUser.get();
         }
-        ;
+        List<Task> userTasks = user.getTasks();
         return userTasks;
     }
 }
