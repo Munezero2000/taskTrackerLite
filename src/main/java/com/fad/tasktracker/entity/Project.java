@@ -2,6 +2,8 @@ package com.fad.tasktracker.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,7 +48,7 @@ public class Project {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
-    private Set<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
     @Override
     public String toString() {
