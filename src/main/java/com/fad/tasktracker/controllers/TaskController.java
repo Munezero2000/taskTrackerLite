@@ -127,9 +127,6 @@ public class TaskController {
         task.setStatus(status);
         Map<String, Object> response = taskService.updateTask(id, task);
 
-        if (response.containsKey("message")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
         return ResponseEntity.ok(response);
     }
 
