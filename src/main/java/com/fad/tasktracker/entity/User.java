@@ -3,6 +3,8 @@ package com.fad.tasktracker.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,11 +38,11 @@ public class User implements UserDetails {
     private String lastName;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "invalid email format")
+    @Email(message = "Invalid email format")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(min = 4, max = 1024, message = "password must be 4 charcters minimum")
+    @Size(min = 4, max = 1024, message = "Password must be 4 characters minimum")
     private String password;
 
     @Column(name = "gender")
@@ -52,6 +54,8 @@ public class User implements UserDetails {
     private Role role;
 
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "assignedTo", fetch = FetchType.EAGER)
     private List<Task> tasks = new ArrayList<>();
 

@@ -2,6 +2,8 @@ package com.fad.tasktracker.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +24,8 @@ public class Task {
     private Long id;
 
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
@@ -30,10 +34,12 @@ public class Task {
     @Column(nullable = false)
     private String name;
 
-    @NotBlank(message = "the description must not be blank")
+    @NotBlank(message = "The description must not be blank")
     private String description;
 
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "assigned_to", nullable = false)
     private User assignedTo;
@@ -52,7 +58,8 @@ public class Task {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "task")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     private List<TaskProgress> progress;
 }
