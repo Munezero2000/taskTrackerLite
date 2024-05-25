@@ -19,14 +19,14 @@ public class RoleSeeder implements CommandLineRunner {
     }
 
     private void seedRoles() {
-        if (roleRepository.findByName("DEVELOPER") == null) {
+        if (roleRepository.findByName("DEVELOPER").isEmpty()) {
             Role developerRole = new Role();
             developerRole.setName("DEVELOPER");
             developerRole.setDescription("Developer Role");
             roleRepository.save(developerRole);
         }
 
-        if (roleRepository.findByName("MANAGER") == null) {
+        if (roleRepository.findByName("MANAGER").isEmpty()) {
             Role managerRole = new Role();
             managerRole.setName("MANAGER");
             managerRole.setDescription("Manager Role");

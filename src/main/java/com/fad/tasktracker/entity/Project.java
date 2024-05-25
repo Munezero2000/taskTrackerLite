@@ -31,6 +31,7 @@ public class Project {
     @NotBlank
     private String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
@@ -44,7 +45,7 @@ public class Project {
     private LocalDate expectedEndDate;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private Set<Task> tasks;
 
     @Override
